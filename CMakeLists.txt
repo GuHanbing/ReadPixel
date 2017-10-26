@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.9)
+#SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+#SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+project( ReadPixel )
+find_package( OpenCV REQUIRED )
+add_executable( ReadPixel main.cpp )
+target_link_libraries( ReadPixel  ${OpenCV_LIBS} )
