@@ -4,23 +4,17 @@
 #include <vector>
 #include<iostream>
 #include<string>
+#include "Tools-ReadPixel.hpp"
 using namespace cv;
 using namespace std;
 
-#define WINDOW_NAME "目标图像"
-/*------------------------------------------------------/
- /功能：鼠标处理事件函数
- /event:鼠标事件  x,y: 鼠标当前坐标 flag:
- /param：函数指针
- /------------------------------------------------------*/
-void OnMouseMove(int event, int x, int y, int flag, void* param = NULL);
-bool selectFlag = false;
+#define WINDOW_NAME "目标图像（右键退出）"
 
-Mat frame,HSVframe;
+
 bool stop=false;
-void on_Matching(Mat g_srcImage, Mat g_templateImage);
 int main()
 {
+    Mat frame,HSVframe;
     int choice=0;
     int video=0;
     VideoCapture cap;
@@ -51,18 +45,17 @@ int main()
         }
         cap>>frame;
     }
-    
-    cvtColor(frame, HSVframe, COLOR_BGR2HSV);
     namedWindow(WINDOW_NAME, 1);
-    setMouseCallback(WINDOW_NAME, OnMouseMove, NULL);
-    imshow(WINDOW_NAME, HSVframe);
-    
-    while (!stop)
+    imshow(WINDOW_NAME, frame);
+    Pixel p;
+    p.mat=frame;
+    setRead(WINDOW_NAME,p);
+    while (!p.stop)
     {
         if(choice==0)
         {
             cap>>frame;
-            cvtColor(frame, HSVframe, COLOR_BGR2HSV);
+           
         }
         imshow(WINDOW_NAME, frame);
         waitKey(30);
@@ -71,25 +64,4 @@ int main()
 }
 
 
-void OnMouseMove(int event, int x, int y, int flag, void* param /* = NULL */)
-{
-   
-    static Rect rect(-1, -1, -1, -1);  //ROI
-    static Point Origin(-1, -1);     //起点
-    //左键按下，且不移动
-    if (event == CV_EVENT_LBUTTONDOWN )
-    {
-        cout<<"H:"<<(int)HSVframe.at<Vec3b>(y,x)[0]<<endl;
-        cout<<"S:"<<(int)HSVframe.at<Vec3b>(y,x)[1]<<endl;
-        cout<<"V:"<<(int)HSVframe.at<Vec3b>(y,x)[2]<<endl;
-        cout<<"B:"<<(int)frame.at<Vec3b>(y,x)[0]<<endl;
-        cout<<"G:"<<(int)frame.at<Vec3b>(y,x)[1]<<endl;
-        cout<<"R:"<<(int)frame.at<Vec3b>(y,x)[2]<<endl;
-    }
-    if (event == CV_EVENT_RBUTTONDOWN )
-    {
-        stop=true;
-    }
-    
-}
 
