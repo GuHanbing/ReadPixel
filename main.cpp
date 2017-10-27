@@ -5,10 +5,6 @@
 #include<iostream>
 using namespace cv;
 using namespace std;
-
-
-Mat SrcImg;              //输入图像
-
 bool selectFlag = false;  //
 /*------------------------------------------------------/
  /功能：鼠标处理事件函数
@@ -18,32 +14,33 @@ bool selectFlag = false;  //
 void OnMouseMove(int event, int x, int y, int flag, void* param = NULL);
 
 
-Mat frame;
-int expectNum=2;
+Mat frame,HSVframe;
+bool stop=false;
 void on_Matching(Mat g_srcImage, Mat g_templateImage);
 int main()
 {
-    VideoCapture cap(1);
+    int video;
+    cout<<"input No of Video:"<<endl;
+    cin>>video;
+    VideoCapture cap(video);
     if (!cap.isOpened())
     {
         return -1;
     }
     
     cap>>frame;
-    cvtColor(frame, SrcImg, COLOR_BGR2HSV);
+    cvtColor(frame, HSVframe, COLOR_BGR2HSV);
     namedWindow("选择目标", 1);
     setMouseCallback("选择目标", OnMouseMove, NULL);
-    imshow("选择目标", SrcImg);
-    bool stop=false;
-    while (1)
+    imshow("选择目标", HSVframe);
+    
+    while (!stop)
     {
         cap>>frame;
-        cvtColor(frame, SrcImg, COLOR_BGR2HSV);
+        cvtColor(frame, HSVframe, COLOR_BGR2HSV);
         imshow("选择目标", frame);
-        if (waitKey(30) == 'c')
-            stop = true;
+        waitKey(30);
     }
-    waitKey(0);
     return 0;
 }
 
@@ -56,12 +53,16 @@ void OnMouseMove(int event, int x, int y, int flag, void* param /* = NULL */)
     //左键按下，且不移动
     if (event == CV_EVENT_LBUTTONDOWN )
     {
-        cout<<"H:"<<(int)SrcImg.at<Vec3b>(y,x)[0]<<endl;
-        cout<<"S:"<<(int)SrcImg.at<Vec3b>(y,x)[1]<<endl;
-        cout<<"V:"<<(int)SrcImg.at<Vec3b>(y,x)[2]<<endl;
+        cout<<"H:"<<(int)HSVframe.at<Vec3b>(y,x)[0]<<endl;
+        cout<<"S:"<<(int)HSVframe.at<Vec3b>(y,x)[1]<<endl;
+        cout<<"V:"<<(int)HSVframe.at<Vec3b>(y,x)[2]<<endl;
         cout<<"B:"<<(int)frame.at<Vec3b>(y,x)[0]<<endl;
         cout<<"G:"<<(int)frame.at<Vec3b>(y,x)[1]<<endl;
         cout<<"R:"<<(int)frame.at<Vec3b>(y,x)[2]<<endl;
+    }
+    if (event == CV_EVENT_RBUTTONDOWN )
+    {
+        stop=true;
     }
     
 }
